@@ -1,0 +1,25 @@
+{
+  "name": "webapp-express",
+  "version": "1.0.0",
+  "description": "Costruzione di un app da 0",
+  "keywords": [
+    "express",
+    "complete",
+    "project",
+    "from",
+    "scratch",
+    "backend+frontend"
+  ],
+  "license": "ISC",
+  "author": "Sirio Ghiringhelli",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "watch": "node --watch app.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.20.0"
+  }
+}
