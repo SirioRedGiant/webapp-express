@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
+const port = process.env.PORT || 3000;
+const movieRouter = require("./routes/movies");
 
 // MIDDLEWARES
 const logger = require("./middlewares/logger");
 
-app.use(express.static("public"));
+app.use(express.static("public")); // file statici --> immagini
 app.use(express.json());
 
 // TEST ROUTE
