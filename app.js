@@ -3,12 +3,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // MIDDLEWARES
+const cors = require("cors");
 const logger = require("./middlewares/logger");
 const errorMiddleware = require("./middlewares/errorsHandler");
 
 app.use(logger); // Attivazione del logger ad ogni richiesta
 app.use(express.static("public")); // file statici --> immagini
 app.use(express.json());
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 // DEFINIZIONE ROTTE
 const globalRouter = require("./routes/globalRouter");
