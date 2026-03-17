@@ -1,6 +1,6 @@
 const connection = require("../database/db");
-const { getFullImageUrl } = require("../utils/imageHelper");
-const { handleDbError } = require("../utils/dbHandler");
+const { getFullImageUrl } = require("../utils/utilities");
+const { handleDbError } = require("../utils/utilities");
 
 //^ Index --> Lista film
 const index = (req, res) => {

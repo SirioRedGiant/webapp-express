@@ -30,7 +30,7 @@ const handleDbError = (res, err) => {
   // La risposta JSON standard da inviare al client (Postman/Browser)
   const responseData = {
     success: false,
-    message: "Errore interno del database",
+    message: "Internal server error",
   };
 
   // Se in modalità sviluppo (dev environment), aggiungo una chiave error che aggiunge l'errore.

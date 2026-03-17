@@ -2,10 +2,12 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 const movieRouter = require("./routes/movies");
+const globalRouter = require("./routes/globalRouter");
 
 // MIDDLEWARES
 const logger = require("./middlewares/logger");
 const errorMiddleware = require("./middlewares/errorsHandler");
+app.use("/", globalRouter);
 
 app.use(logger); // Attivazione del logger ad ogni richiesta
 app.use(express.static("public")); // file statici --> immagini
