@@ -5,28 +5,32 @@ const movieRouter = require("./routes/movies");
 
 // MIDDLEWARES
 const logger = require("./middlewares/logger");
+const errorMiddleware = require("./middlewares/errorsHandler");
 
+app.use(logger); // Attivazione del logger ad ogni richiesta
 app.use(express.static("public")); // file statici --> immagini
 app.use(express.json());
 
-// TEST ROUTE
+// DEFINIZIONE ROTTE
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.send("Welcome to Movies-DB!");
 });
+app.use("/movies", movieRouter);
 
+// rotta test error 500
 app.get("/test-error", (req, res) => {
   a.b;
   res.send("Hello world");
 });
 
 // ERRORS HANDLING
-const errorMiddleware = require("./middlewares/errorsHandler");
 app.use(errorMiddleware.error404);
 app.use(errorMiddleware.error500);
+
 // SERVER START
-app.listen(3000, () => {
+app.listen(process.env.APP_PORT || 3000, () => {
   console.log("Server environment: " + process.env.APP_MODE); // per far sapere al server che è eseguito in DEV --> IL MIO ENVIRONMENT localhost for testing
   console.log(
-    "Server listening on " + process.env.APP_URL + ";" + process.env.APP_PORT,
+    "Server listening on " + process.env.APP_URL + ":" + process.env.APP_PORT,
   );
 });
