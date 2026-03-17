@@ -17,7 +17,7 @@ const globalRouter = require("./routes/globalRouter");
 const movieRouter = require("./routes/movieRouter");
 
 app.use(globalRouter);
-app.use("/movie", movieRouter);
+app.use("/movies", movieRouter);
 
 // ERRORS HANDLING
 app.use(errorMiddleware.error404);
