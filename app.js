@@ -1,29 +1,21 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
-const movieRouter = require("./routes/movies");
-const globalRouter = require("./routes/globalRouter");
 
 // MIDDLEWARES
 const logger = require("./middlewares/logger");
 const errorMiddleware = require("./middlewares/errorsHandler");
-app.use("/", globalRouter);
 
 app.use(logger); // Attivazione del logger ad ogni richiesta
 app.use(express.static("public")); // file statici --> immagini
 app.use(express.json());
 
 // DEFINIZIONE ROTTE
-app.get("/", (req, res) => {
-  res.send("Welcome to Movies-DB!");
-});
-app.use("/movies", movieRouter);
+const globalRouter = require("./routes/globalRouter");
+const movieRouter = require("./routes/movieRouter");
 
-// rotta test error 500
-app.get("/test-error", (req, res) => {
-  a.b;
-  res.send("Hello world");
-});
+app.use(globalRouter);
+app.use("/movie", movieRouter);
 
 // ERRORS HANDLING
 app.use(errorMiddleware.error404);

@@ -14,7 +14,7 @@ const getFullImageUrl = (req, imageName) => {
   // Usiamo .get() perché l'host si trova negli "Headers" (intestazioni) della richiesta HTTP.
   const host = req.get("host");
 
-  return `${protocol}://${host}/img/${imageName}`; // Risultato: protocollo + :// + indirizzo server + /img/ + nome del file.
+  return `${process.env.APP_URL}:${process.env.APP_PORT}/img/${imageName}`;
 };
 
 /**
