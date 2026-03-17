@@ -1,24 +1,17 @@
 const connection = require("../database/db");
+const { getFullImageUrl } = require("../utils/imageHelper");
+const { handleDbError } = require("../utils/dbHandler");
 
 //^ Index --> Lista film
 const index = (req, res) => {
   const movieSQL = "SELECT * FROM movies";
   connection.query(movieSQL, (err, results) => {
-    if (err) {
-      const responseData = {
-        message: "Database query failed",
-      };
-      // se siamo in dev environment --> aggiungo una chiave error che aggiunge l'errore. Utile per testare senza poi farlo vedere all'utente
-      if (process.env.APP_MODE === "dev") {
-        responseData.error = err.message;
-      }
-      console.log(err.message);
-      return res.status(500).json(responseData);
-    }
+    if (handleDbError(res, err)) return;
+
     // map  dei risultati per aggiungere l'URL completo alle immagini
     const movies = results.map((movie) => ({
       ...movie,
-      image: movie.image ? `http://localhost:3000/img/${movie.image}` : null,
+      image: getFullImageUrl(req, movie.image),
     }));
     res.json(movies);
   });
@@ -31,10 +24,7 @@ const show = (req, res) => {
   // Query 1 --> Recupero il film
   const movieSQL = "SELECT * FROM movies WHERE id = ?";
   connection.query(movieSQL, [id], (err, movieResults) => {
-    if (err)
-      return res.status(500).json({
-        message: "Database error",
-      });
+    if (handleDbError(res, err)) return;
     if (movieResults.length === 0)
       return res.status(404).json({
         message: "Movie not found",
@@ -43,15 +33,12 @@ const show = (req, res) => {
     const movie = movieResults[0];
 
     // Path immagine (es. localhost:3000/img/inception.jpg)
-    movie.image = `${req.protocol}://${req.get("host")}/img/${movie.image}`;
+    movie.image = getFullImageUrl(req, movie.image);
 
     // Query 2 --> Recupero delle recensioni collegate al film
     const reviewsSql = "SELECT * FROM reviews WHERE movie_id = ?";
     connection.query(reviewsSql, [id], (err, reviewsResults) => {
-      if (err)
-        return res.status(500).json({
-          error: "Database error",
-        });
+      if (handleDbError(res, err)) return;
 
       // l'array delle recensioni all'oggetto movie
       movie.reviews = reviewsResults;
