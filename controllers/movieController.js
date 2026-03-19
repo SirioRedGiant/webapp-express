@@ -1,6 +1,9 @@
 const connection = require("../database/db");
-const { getFullImageUrl } = require("../utils/utilities");
-const { handleDbError } = require("../utils/utilities");
+const {
+  getFullImageUrl,
+  validateReview,
+  handleDbError,
+} = require("../utils/utilities");
 
 //^ Index --> Lista film
 const index = (req, res) => {
@@ -48,4 +51,32 @@ const show = (req, res) => {
   });
 };
 
-module.exports = { index, show };
+//^ StoreReview - Salva/Aggiunge una nuova recensione
+const storeReview = (req, res) => {
+  const { id } = req.params; // l'ID del film daell'URL --> movie_id perchè riguarda il film specifico
+
+  //note controllo dati ricevuti validateReview --> utility function se non li passa entra in validationError
+  const validationError = validateReview(req.body);
+  if (validationError) {
+    return res.status(400).json({
+      success: false,
+      message: validationError,
+    });
+  }
+
+  const { name, vote, text } = req.body; // i dati dal form per React.. il body della richiesta
+
+  // Query SQL
+  const storeReviewSql =
+    "INSERT INTO reviews (movie_id, name, vote, text) VALUES (?, ?, ?, ?)";
+
+  connection.query(storeReviewSql, [id, name, vote, text], (err, results) => {
+    if (handleDbError(res, err)) return;
+
+    res.status(201).json({
+      message: "Review added",
+      id: results.insertId,
+    });
+  });
+};
+module.exports = { index, show, storeReview };

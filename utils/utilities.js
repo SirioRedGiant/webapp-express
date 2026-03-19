@@ -45,4 +45,21 @@ const handleDbError = (res, err) => {
   return true; // Comunichiamo che l'errore è stato gestito
 };
 
-module.exports = { handleDbError, getFullImageUrl };
+/**
+ * Funzione che valida i dati della recensione prima di poter essere inseriti
+ * @param {object} data - req.body (name, vote, text)
+ * @returns {string|null} - Ritorna il messaggio di errore o null se è  i valori sono passati
+ */
+const validateReview = (data) => {
+  const { name, vote, text } = data;
+
+  if (!name || name.length < 2) return "Il nome deve avere almeno 2 caratteri";
+  if (!vote || vote < 1 || vote > 5)
+    return "Il voto deve essere un numero compreso tra 1 e 5";
+  if (!text || text.length < 5)
+    return "La recensione è troppo corta (minimo 5 caratteri)";
+
+  return null; // se passa le condizioni allora è ok
+};
+
+module.exports = { handleDbError, getFullImageUrl, validateReview };
