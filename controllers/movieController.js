@@ -7,7 +7,12 @@ const {
 
 //^ Index --> Lista film
 const index = (req, res) => {
-  const movieSQL = "SELECT * FROM movies";
+  const movieSQL = `
+    SELECT movies.*, AVG(reviews.vote) AS vote_avg 
+    FROM movies
+    LEFT JOIN reviews ON movies.id = reviews.movie_id
+    GROUP BY movies.id
+  `;
   connection.query(movieSQL, (err, results) => {
     if (handleDbError(res, err)) return;
 
