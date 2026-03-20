@@ -62,4 +62,40 @@ const validateReview = (data) => {
   return null; // se passa le condizioni allora è ok
 };
 
-module.exports = { handleDbError, getFullImageUrl, validateReview };
+/**
+ * Funzione che valida i dati della recensione prima di poter essere inseriti
+ * @param {object} data
+ * @returns {string|null}
+ */
+const validateMovie = (data) => {
+  const { title, director, genre, release_year, abstract } = data;
+
+  if (!title || title.trim().length < 1)
+    return "Title is required and must be at least 1 characters.";
+  if (!director || director.trim().length < 2) return "Director is required.";
+  if (!genre || genre.trim().length < 3) return "Genre is required.";
+  if (!abstract || abstract.trim().length < 5) {
+    return "Abstract is required and must be at least 5 characters long.";
+  }
+
+  // 3. Controllo Anno (Dinamico e preciso)
+  const currentYear = new Date().getFullYear();
+
+  // Se l'anno non è un numero o è fuori dal range --> currentYear come limite massimo "fino a oggi"
+  if (
+    isNaN(release_year) ||
+    release_year < 1895 ||
+    release_year > currentYear
+  ) {
+    return `L'anno deve essere tra il 1895 e il ${currentYear}.`;
+  }
+
+  return null; // ok
+};
+
+module.exports = {
+  handleDbError,
+  getFullImageUrl,
+  validateReview,
+  validateMovie,
+};

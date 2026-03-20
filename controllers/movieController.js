@@ -3,6 +3,7 @@ const {
   getFullImageUrl,
   validateReview,
   handleDbError,
+  validateMovie,
 } = require("../utils/utilities");
 
 //^ Index --> Lista film
@@ -56,6 +57,38 @@ const show = (req, res) => {
   });
 };
 
+//^ Store - Crea un nuovo film
+const store = (req, res) => {
+  const validationError = validateMovie(req.body);
+  if (validationError) {
+    return res.status(400).json({
+      success: false,
+      message: validationError,
+    });
+  }
+
+  const { title, director, genre, release_year, abstract, image } = req.body;
+
+  const sql = `
+    INSERT INTO movies (title, director, genre, release_year, abstract, image) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(
+    sql,
+    [title, director, genre, release_year, abstract, image],
+    (err, results) => {
+      if (handleDbError(res, err)) return;
+
+      // altrimenti --> stato 201 (Created) e l'ID del nuovo film
+      res.status(201).json({
+        message: "Movie created successfully",
+        id: results.insertId, // --> per il redirect nel frontend
+      });
+    },
+  );
+};
+
 //^ StoreReview - Salva/Aggiunge una nuova recensione
 const storeReview = (req, res) => {
   const { id } = req.params; // l'ID del film daell'URL --> movie_id perchè riguarda il film specifico
@@ -84,4 +117,4 @@ const storeReview = (req, res) => {
     });
   });
 };
-module.exports = { index, show, storeReview };
+module.exports = { index, show, store, storeReview };
