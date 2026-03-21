@@ -67,7 +67,11 @@ const store = (req, res) => {
     });
   }
 
-  const { title, director, genre, release_year, abstract, image } = req.body;
+  const { title, director, genre, release_year, abstract } = req.body;
+
+  // se il file è stato caricato, prendiamo il nome generato dal middleware
+  // altrimenti usiamo un'immagine di default
+  const image = req.file ? req.file.filename : "default.jpg";
 
   const sql = `
     INSERT INTO movies (title, director, genre, release_year, abstract, image) 
@@ -76,7 +80,7 @@ const store = (req, res) => {
 
   connection.query(
     sql,
-    [title, director, genre, release_year, abstract, image],
+    [title, director, genre, Number(release_year), abstract, image],
     (err, results) => {
       if (handleDbError(res, err)) return;
 
@@ -88,6 +92,22 @@ const store = (req, res) => {
     },
   );
 };
+
+/**
+//note  Perché togliere dal req.body?
+//note  Quando invii un form con un file (usando enctype="multipart/form-data"), Multer divide i dati in due "scatole" diverse:
+//note  req.body: Contiene tutti i testi (titolo, regista, anno, ecc.).
+//note  req.file: Contiene l'oggetto del file (l'immagine fisica).
+//note  Se nel tuo controller scrivi const { title, ..., image } = req.body, stai cercando l'immagine nella scatola dei testi. Ma l'immagine non è lì, è nella scatola dei file. Per questo la variabile image estratta dal body sarebbe undefined.
+ */
+/**
+//?     Cos'è multipart/form-data?
+//?     Normalmente, quando invii un form, i dati viaggiano come una stringa di testo. Ma una foto non è testo, è un file binario pesante.
+//?     multipart/form-data è un formato speciale che dice al browser: "Ehi, non inviare solo testo, ma dividi il pacchetto in più parti: alcune sono testo, una è un file intero".
+//?     In React: Non devi scriverlo a mano nell'HTML. Se usi l'oggetto new FormData(e.target), il browser capisce da solo che deve usare il formato multipart/form-data.
+
+ * 
+ */
 
 //^ StoreReview - Salva/Aggiunge una nuova recensione
 const storeReview = (req, res) => {
